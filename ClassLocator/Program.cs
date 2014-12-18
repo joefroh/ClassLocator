@@ -10,6 +10,13 @@ namespace ClassLocator
     {
         static void Main(string[] args)
         {
+            var locator = ClassLocator.Locator;
+
+            locator.RegisterInstance<TestClass>(new TestClass());
+
+            locator.Fetch<TestClass>().HelloWorld();
+
+            Console.ReadKey();
         }
     }
 }
