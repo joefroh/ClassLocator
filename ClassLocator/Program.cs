@@ -12,7 +12,7 @@ namespace ClassLocator
         {
             var locator = ClassLocator.Locator;
 
-            locator.RegisterInstance<TestClass>(new TestClass());
+            locator.Register<TestClass, TestClass>();
 
             locator.Fetch<TestClass>().HelloWorld();
 
