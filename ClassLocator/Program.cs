@@ -12,8 +12,6 @@ namespace ClassLocator
         {
             var locator = ClassLocator.Locator;
 
-            locator.Register<TestClass, TestClass>();
-
             locator.Fetch<TestClass>().HelloWorld();
 
             Console.ReadKey();

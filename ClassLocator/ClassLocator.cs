@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace ClassLocator
 {
@@ -52,8 +53,7 @@ namespace ClassLocator
 
         public T Fetch<T>(){
             object temp;
-            Type type;
-
+           
             //Hae we already loaded an instance?
             _instances.TryGetValue(typeof(T), out temp);
 
@@ -64,17 +64,38 @@ namespace ClassLocator
             }
 
             //Maybe we have registered and not loaded it yet.
-            _classes.TryGetValue(typeof(T), out type);
+            temp = InitRegisteredClass<T>();
+            if (temp != null)
+            {
+                return (T)temp;
+            }
+           
+            //Do a sweep to see if the DLL has been loaded and we can register the class.
+            Sweep();
+            temp = InitRegisteredClass<T>();
+            if (temp != null)
+            {
+                return (T)temp;
+            }
+
+            //If we get here, something has gone wrong. The asked for class does not exist in the locator.
+            throw new ArgumentException("The requested type has not been registered with the Locator or cannot be found.");
+        }
+
+        private T InitRegisteredClass<T>()
+        {
+            Type type;
+            object temp = null;
+            _classes.TryGetValue(typeof (T), out type);
 
             if (type != null)
             {
                 temp = Activator.CreateInstance(type);
-                _instances.Add(typeof(T), temp);
-                return (T)temp;
+                _instances.Add(typeof (T), temp);
+                
             }
 
-            //TODO: This should trigger a new sweep first
-            throw new ArgumentException("The requested type has not been registered with the Locator or cannot be found.");
+            return (T)temp;
         }
 
         /// <summary>
@@ -82,7 +103,19 @@ namespace ClassLocator
         /// </summary>
         private void Sweep()
         {
-            //TODO
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            foreach (var assembly in assemblies)
+            {
+                foreach (var type in assembly.DefinedTypes)
+                {
+                    if (typeof(IClassRegistrar).IsAssignableFrom(type) && typeof(IClassRegistrar) != type)
+                    {
+                        var reg = Activator.CreateInstance(type) as IClassRegistrar;
+                        reg.RegisterClasses(_locator);
+                    }
+                }
+            }
         }
 
         public static ClassLocator Locator
