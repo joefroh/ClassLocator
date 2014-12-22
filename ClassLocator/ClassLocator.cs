@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +21,7 @@ namespace ClassLocator
         //Active instances of classes and stuff.
         private static Dictionary<Type, Object> _instances;
         private static Dictionary<Type, Type> _classes;
+        private static List<Assembly> _scannedAssemblies; 
 
         
         private ClassLocator()
@@ -26,6 +29,7 @@ namespace ClassLocator
             _loading = true;
             _instances = new Dictionary<Type, object>();
             _classes = new Dictionary<Type, Type>();
+            _scannedAssemblies = new List<Assembly>();
         }
 
         public void RegisterInstance<T>(T obj)
@@ -104,9 +108,14 @@ namespace ClassLocator
         private void Sweep()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
+            
             foreach (var assembly in assemblies)
             {
+                if (_scannedAssemblies.Contains(assembly))
+                {
+                    continue;
+                }
+
                 foreach (var type in assembly.DefinedTypes)
                 {
                     if (typeof(IClassRegistrar).IsAssignableFrom(type) && typeof(IClassRegistrar) != type)
@@ -115,7 +124,9 @@ namespace ClassLocator
                         reg.RegisterClasses(_locator);
                     }
                 }
+                _scannedAssemblies.Add(assembly);
             }
+
         }
 
         public static ClassLocator Locator

@@ -13,7 +13,7 @@ namespace ClassLocator
             var locator = ClassLocator.Locator;
 
             locator.Fetch<TestClass>().HelloWorld();
-
+            locator.Fetch<IService>();
             Console.ReadKey();
         }
     }
