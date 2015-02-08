@@ -10,7 +10,7 @@ namespace ClassLocator
     {
         public void RegisterClasses(ClassLocator locator)
         {
-            locator.Register<TestClass,TestClass>();
+            locator.Register<ITest,TestClass>();
         }
     }
 }

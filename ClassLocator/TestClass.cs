@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ClassLocator
 {
-    public class TestClass
+    public class TestClass : ITest
     {
         public TestClass()
         {
