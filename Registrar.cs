@@ -8,7 +8,7 @@ namespace ClassLocator
 {
     class Registrar : IClassRegistrar
     {
-        public void RegisterClasses(ClassLocator locator)
+        public void RegisterClasses(Locator locator)
         {
             locator.Register<ITest,TestClass>();
         }

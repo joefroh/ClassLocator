@@ -12,10 +12,10 @@ namespace ClassLocator
     //TODO: Sweep for interfaces/type registration and just log them into a temp list initially, as resources are requested, lazy load the instance. 
     //This should mostly avoid the embedded location call problem.
 
-    public class ClassLocator
+    public class Locator
     {
         //Privates (lol)
-        private static ClassLocator _locator;
+        private static Locator _locator;
         private static bool _loading;
         
         //Active instances of classes and stuff.
@@ -24,7 +24,7 @@ namespace ClassLocator
         private static List<Assembly> _scannedAssemblies; 
 
         
-        private ClassLocator()
+        private Locator()
         {
             _loading = true;
             _instances = new Dictionary<Type, object>();
@@ -129,13 +129,13 @@ namespace ClassLocator
 
         }
 
-        public static ClassLocator Locator
+        public static Locator Instance
         {
             get
             {
                 if (_locator == null)
                 {
-                    _locator = new ClassLocator();
+                    _locator = new Locator();
                     _locator.Sweep();
                     return _locator;
                 }

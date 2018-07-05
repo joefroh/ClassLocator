@@ -8,6 +8,6 @@ namespace ClassLocator
 {
     public interface IClassRegistrar
     {
-        void RegisterClasses(ClassLocator locator);
+        void RegisterClasses(Locator locator);
     }
 }

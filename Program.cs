@@ -10,7 +10,7 @@ namespace ClassLocator
     {
         static void Main(string[] args)
         {
-            var locator = ClassLocator.Locator;
+            var locator = Locator.Instance;
 
             locator.Fetch<ITest>().HelloWorld();
             //locator.Fetch<IService>();
